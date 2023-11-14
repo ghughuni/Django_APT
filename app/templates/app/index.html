@@ -13,13 +13,16 @@
 
 <body data-add-url="{% url 'add_url' %}" data-csrf-token="{{ csrf_token }}">
     <!-- navbar section-->
-    <nav class="navbar bg-body-tertiary">
-        <form class="container-fluid justify-content-start">
+    <nav class="navbar bg-body-tertiary d-flex justify-content-between">
+        <div>
+            <form class="container-fluid justify-content-start">
             <!-- Button trigger modal -->
             <button class="btn btn-outline-success me-2" type="button" data-bs-toggle="modal"
                 data-bs-target="#exampleModal">Add</button>
             <button class="btn btn-outline-success me-2" type="button">Update</button>
         </form>
+    </div>
+        <div class="mx-3">Total products: {{ total_link }}</div>
     </nav>
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -65,7 +68,13 @@
                 <li><span class='fw-bold'>Updated: </span><span>{{ i.updated }}</span></li>
             </ul>
             </p>
-            <a href="{{ i.url }}" target="_blank" class="btn btn-link">Go Link...</a>
+            <div class="card_footer d-flex justify-content-between">
+                <a href="{{ i.url }}" target="_blank" class="btn btn-link">Go Link...</a>
+                <form action="{% url 'delete_url' id=i.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit" id="{{ i.id }}">Delete</button>
+                </form>
+            </div>
         </div>
     </div>
     {% endfor %}
