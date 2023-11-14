@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -7,31 +8,67 @@
     <title>Amazon Price Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
-<body>
-    <div class="card">
+<body data-add-url="{% url 'add_url' %}" data-csrf-token="{{ csrf_token }}">
+    <!-- navbar section-->
+    <nav class="navbar bg-body-tertiary">
+        <form class="container-fluid justify-content-start">
+            <!-- Button trigger modal -->
+            <button class="btn btn-outline-success me-2" type="button" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">Add</button>
+            <button class="btn btn-outline-success me-2" type="button">Update</button>
+        </form>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add new product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="input-group mb-3">
+                        {% csrf_token %}
+                        <span class="input-group-text" id="basic-addon1">URL:</span>
+                        <input type="text" class="form-control"  name="url" id="basic-url"
+                            aria-describedby="basic-addon3 basic-addon4">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addBtn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% for i in product%}
+    <div class="card m-3 shadow-lg p-3 mb-5 bg-body rounded">
         <div class="card-header fw-bold">
-            {{ name }}
+            {{ i.name }}
         </div>
         <div class="card-body">
             <p class="card-text">
             <ul>
-                <li ><span class='fw-bold'>Current Price ($): </span> <span>{{ price }}</span></li>
-                <li ><span class='fw-bold'>Old Price ($): </span> <span>{{ old_price }}</span></li>
-                <li ><span class='fw-bold'>Difference ($): </span> 
-                {% if diff_price < 0 %} 
-                <span class="text-danger">{{ diff_price }}</span>
-                {% else %}
-                    <span>{{ diff_price }}</span>
-                {% endif %}
+                <li><span class='fw-bold'>Current Price ($): </span> <span>{{ i.current_price }}</span></li>
+                <li><span class='fw-bold'>Old Price ($): </span> <span>{{ i.old_price }}</span></li>
+                <li><span class='fw-bold'>Difference ($): </span>
+                    {% if i.price_difference < 0 %} <span class="text-danger">{{ i.price_difference }}</span>
+                        {% else %}
+                        <span class="text-success">{{ i.price_difference }}</span>
+                        {% endif %}
                 </li>
+                <li><span class='fw-bold'>Created: </span><span>{{ i.created }}</span></li>
+                <li><span class='fw-bold'>Updated: </span><span>{{ i.updated }}</span></li>
             </ul>
             </p>
-            <a href="{{ url }}" target="_blank" class="btn btn-primary">Go Link...</a>
+            <a href="{{ i.url }}" target="_blank" class="btn btn-link">Go Link...</a>
         </div>
     </div>
+    {% endfor %}
 
 
 
@@ -39,6 +76,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
+    <script src="{% static 'main.js' %}"></script>
 </body>
 
 </html>
