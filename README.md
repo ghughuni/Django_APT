@@ -12,8 +12,8 @@ This project is a Django-based web application that allows users to track the pr
 - *SQLite*
 
 ## Backend:
-- *Python:* 
-- *Django:*
+- *Python* 
+- *Django*
 - *Beautiful Soup*
 
 # Key Functions:
