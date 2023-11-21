@@ -15,13 +15,14 @@
     <!-- navbar section-->
     <nav class="navbar bg-body-tertiary d-flex justify-content-between">
         <div>
-            <form class="container-fluid justify-content-start">
             <!-- Button trigger modal -->
-            <button class="btn btn-outline-success me-2" type="button" data-bs-toggle="modal"
+            <button class="btn btn-outline-success mx-3" type="button" data-bs-toggle="modal"
                 data-bs-target="#exampleModal">Add</button>
-            <button class="btn btn-outline-success me-2" type="button">Update</button>
-        </form>
-    </div>
+            <form action="{% url 'update_url' %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-outline-success me-2" type="submit">Update</button>
+            </form>
+        </div>
         <div class="mx-3">Total products: {{ total_link }}</div>
     </nav>
     <!-- Modal -->
@@ -59,10 +60,11 @@
                 <li><span class='fw-bold'>Current Price ($): </span> <span>{{ i.current_price }}</span></li>
                 <li><span class='fw-bold'>Old Price ($): </span> <span>{{ i.old_price }}</span></li>
                 <li><span class='fw-bold'>Difference ($): </span>
-                    {% if i.price_difference < 0 %} <span class="text-danger">{{ i.price_difference }}</span>
-                        {% else %}
+                    {% if i.price_difference < 0 %} 
+                        <span class="text-danger">{{ i.price_difference }}</span>
+                    {% else %}
                         <span class="text-success">{{ i.price_difference }}</span>
-                        {% endif %}
+                    {% endif %}
                 </li>
                 <li><span class='fw-bold'>Created: </span><span>{{ i.created }}</span></li>
                 <li><span class='fw-bold'>Updated: </span><span>{{ i.updated }}</span></li>
