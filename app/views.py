@@ -8,7 +8,7 @@ from .models import Links
 
 
 def index(request):
-    product = Links.objects.all().order_by('-created')
+    product = Links.objects.all().order_by('-date')
     total_link = Links.objects.all().count()
     context = {
         'product': product,
@@ -26,21 +26,45 @@ def add_url(request):
             "Accept-Language": "en",
         }
         r = requests.get(url, headers=headers)
+        
+        # r = requests.get(url)
         soup = BeautifulSoup(r.text, "lxml")
+        
+        # get img_url of product
+        img_tag = soup.select_one("#landingImage")
+        if img_tag:
+            img_url = img_tag.get('src')
+            # print("Image URL:", img_url)
+        else:
+            print("No img tag found inside the div with id 'imgTagWrapperId'")
+
 
         # get name of product
-        name = soup.select_one(selector="#productTitle").getText()
-        name = name.strip()
+        name_element = soup.select_one(selector="#productTitle")
+        if name_element:
+            name = name_element.getText().strip()
+            # print("Product Name:", name)
+        else:
+            print(f"No product title found for URL: {url}")
+            # Handle the case where the product title is not found
+            return JsonResponse({'status': 'error', 'message': 'Product title not found'})
 
         # get price of product
-        whole_part = soup.select_one('.a-price-whole').get_text()
-        fraction_part = soup.select_one('.a-price-fraction').get_text()
-        price_str = whole_part.replace(',', '') + fraction_part
-        price = float(price_str)
+        whole_part = soup.select_one('.a-price-whole')
+        fraction_part = soup.select_one('.a-price-fraction')
+        if whole_part and fraction_part:
+            whole_part_text = whole_part.get_text()
+            fraction_part_text = fraction_part.get_text()
+            price_str = whole_part_text.replace(',', '') + fraction_part_text
+            price = float(price_str)
+        else:
+            print(f"No price elements found for URL: {url}")
+            # Handle the case where the price elements are not found
+            return JsonResponse({'status': 'error', 'message': 'Price elements not found'})
 
         old_price_span = soup.find('span', class_='a-price a-text-price')
 
-        if old_price_span is not None:
+        if old_price_span:
             # get old price of product
             old_price_text = old_price_span.get_text(strip=True)
             numeric_part = re.search(r'\$?(\d+\.\d+)', old_price_text)
@@ -51,26 +75,28 @@ def add_url(request):
 
                 # difference Price
                 diff_price = price - old_price
+                diff_price = round(diff_price, 2)
 
             else:
                 print("Could not extract numeric part from old price span")
+                # Handle the case where the numeric part is not found in the old price span
+                return JsonResponse({'status': 'error', 'message': 'Numeric part not found in old price span'})
         else:
             old_price = price
             diff_price = 0
             print(f"No old price found. Using current price: {old_price}")
+
         # Save the details into the Links model
         link = Links.objects.create(name=name,
                                     url=url,
+                                    img_url=img_url,
                                     current_price=price,
                                     old_price=old_price,
                                     price_difference=diff_price)
 
         return redirect('index')
     else:
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Invalid request method'
-        })
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 
 def delete_url(request, id):
@@ -96,24 +122,35 @@ def update_url(request):
                     "Accept-Language": "en",
                 }
                 r = requests.get(link.url, headers=headers)
+                # r = requests.get(link.url)
                 soup = BeautifulSoup(r.text, "lxml")
 
                 # Update name of product
-                name = soup.select_one(selector="#productTitle").getText()
-                name = name.strip()
-                link.name = name
+                name_element = soup.select_one(selector="#productTitle")
+                if name_element is not None:
+                    name = name_element.getText()
+                    name = name.strip()
+                    link.name = name
+                else:
+                    print(f"Could not find product title for URL: {link.url}")
+
 
                 # Update price of product
-                whole_part = soup.select_one('.a-price-whole').get_text()
-                fraction_part = soup.select_one('.a-price-fraction').get_text()
-                price_str = whole_part.replace(',', '') + fraction_part
-                price = float(price_str)
-                link.current_price = price
-
+                whole_part = soup.select_one('.a-price-whole')
+                fraction_part = soup.select_one('.a-price-fraction')
+                if whole_part is not None and fraction_part is not None:
+                    whole_part_text = whole_part.get_text()
+                    fraction_part_text = fraction_part.get_text()
+                    price_str = whole_part_text.replace(',', '') + fraction_part_text
+                    price = float(price_str)
+                    link.current_price = price
+                else:
+                    print(f"Could not find price elements for URL: {link.url}")
+                    
+                    
+                # Update old price of product
                 old_price_span = soup.find('span', class_='a-price a-text-price')
-
                 if old_price_span is not None:
-                    # Update old price of product
                     old_price_text = old_price_span.get_text(strip=True)
                     numeric_part = re.search(r'\$?(\d+\.\d+)', old_price_text)
 
@@ -124,7 +161,7 @@ def update_url(request):
 
                         # Update difference Price
                         link.price_difference = price - old_price
-
+                        link.price_difference = round(link.price_difference, 2)
                     else:
                         print("Could not extract numeric part from old price span")
                 else:

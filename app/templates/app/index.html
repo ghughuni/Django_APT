@@ -1,93 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
+  {% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Amazon Price Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</head>
+  </head>
 
-<body data-add-url="{% url 'add_url' %}" data-csrf-token="{{ csrf_token }}">
+  <body data-add-url="{% url 'add_url' %}" data-csrf-token="{{ csrf_token }}">
     <!-- navbar section-->
     <nav class="navbar bg-body-tertiary d-flex justify-content-between">
-        <div>
-            <!-- Button trigger modal -->
-            <button class="btn btn-outline-success mx-3" type="button" data-bs-toggle="modal"
-                data-bs-target="#exampleModal">Add</button>
-            <form action="{% url 'update_url' %}" method="post" class="d-inline">
-                {% csrf_token %}
-                <button class="btn btn-outline-success me-2" type="submit">Update</button>
-            </form>
-        </div>
-        <div class="mx-3">Total products: {{ total_link }}</div>
+      <div>
+        <!-- Button trigger modal -->
+        <button
+          class="btn btn-outline-success mx-3"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+        >
+          Add
+        </button>
+        <form action="{% url 'update_url' %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-outline-success me-2" type="submit">
+            Update
+          </button>
+        </form>
+      </div>
+      <div class="mx-3">Total products: {{ total_link }}</div>
     </nav>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add new product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="post" class="input-group mb-3">
-                        {% csrf_token %}
-                        <span class="input-group-text" id="basic-addon1">URL:</span>
-                        <input type="text" class="form-control"  name="url" id="basic-url"
-                            aria-describedby="basic-addon3 basic-addon4">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="addBtn">Add</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Add new product
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="" method="post" class="input-group mb-3">
+              {% csrf_token %}
+              <span class="input-group-text" id="basic-addon1">URL:</span>
+              <input
+                type="text"
+                class="form-control"
+                name="url"
+                id="basic-url"
+                aria-describedby="basic-addon3 basic-addon4"
+              />
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" class="btn btn-primary" id="addBtn">
+              Add
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-    
-    {% for i in product%}
-    <div class="card m-3 shadow-lg p-3 mb-5 bg-body rounded">
-        <div class="card-header fw-bold">
-            {{ i.name }}
-        </div>
-        <div class="card-body">
-            <p class="card-text">
-            <ul>
-                <li><span class='fw-bold'>Current Price ($): </span> <span>{{ i.current_price }}</span></li>
-                <li><span class='fw-bold'>Old Price ($): </span> <span>{{ i.old_price }}</span></li>
-                <li><span class='fw-bold'>Difference ($): </span>
-                    {% if i.price_difference < 0 %} 
-                        <span class="text-danger">{{ i.price_difference }}</span>
-                    {% else %}
-                        <span class="text-success">{{ i.price_difference }}</span>
-                    {% endif %}
+    <div class="container">
+      {% for i in product%}
+      <div class="card m-3 shadow-lg p-3 mb-5 bg-body rounded" style="max-width: 100%">
+        <div class="row g-0">
+          <div class="col-md-4 col-sm-12 text-center">
+            <img src="{{ i.img_url }}" class="img-fluid rounded-start" alt="..."/>
+          </div>
+          <div class="col-md-8">
+            <div class="card-header fw-bold fs-4">{{ i.name }}</div>
+            <div class="card-body d-flex flex-column justify-content-evenly">
+              <ul>
+                <li>
+                  <span class="fw-bold">Current Price ($): </span>
+                  <span> {{ i.current_price }}</span>
                 </li>
-                <li><span class='fw-bold'>Created: </span><span>{{ i.created }}</span></li>
-                <li><span class='fw-bold'>Updated: </span><span>{{ i.updated }}</span></li>
-            </ul>
-            </p>
-            <div class="card_footer d-flex justify-content-between">
-                <a href="{{ i.url }}" target="_blank" class="btn btn-link">Go Link...</a>
-                <form action="{% url 'delete_url' id=i.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-danger" type="submit" id="{{ i.id }}">Delete</button>
-                </form>
+                <li>
+                  <span class="fw-bold">Old Price ($): </span>
+                  <span> {{ i.old_price }}</span>
+                </li>
+                <li>
+                  <span class="fw-bold">Difference ($): </span>
+                  {% if i.price_difference < 0 %}
+                  <span class="text-danger">{{ i.price_difference }}</span>
+                  {% else %}
+                  <span class="text-success">{{ i.price_difference }}</span>
+                  {% endif %}
+                </li>
+                <li>
+                  <span class="fw-bold">Date: </span><span>{{ i.date }}</span>
+                </li>
+              </ul>
             </div>
+            <div class="card_footer d-flex justify-content-between">
+              <a href="{{ i.url }}" target="_blank" class="btn btn-link"
+                >Go Link...</a
+              >
+              <form action="{% url 'delete_url' id=i.id %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit" id="{{ i.id }}">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
 
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
     <script src="{% static 'main.js' %}"></script>
-</body>
-
+  </body>
 </html>
