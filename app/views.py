@@ -5,6 +5,10 @@ import lxml
 from bs4 import BeautifulSoup
 import re
 from .models import Links
+from .serializers import LinksSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 
 
 def index(request):
@@ -98,7 +102,7 @@ def add_url(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-
+# Delete Product
 def delete_url(request, id):
     if request.method == 'POST':
         link = Links.objects.get(id=id)
@@ -110,7 +114,7 @@ def delete_url(request, id):
             'message': 'Invalid request method'
         })
 
-
+# Updates of Product Data
 def update_url(request):
     if request.method == 'POST':
         links = Links.objects.all()
@@ -176,3 +180,30 @@ def update_url(request):
         return redirect('index')
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+
+###################
+### API Section ###
+###################
+
+# List all products
+@api_view(['GET'])
+def links_list(request):
+    if request.method == 'GET':
+        links = Links.objects.all()
+        serializer = LinksSerializer(links, many=True)
+        return Response(serializer.data)
+
+# Product Details
+@api_view(['GET'])
+def link_details(request, pk):
+    try:
+        link = Links.objects.get(id=pk)
+        serializer = LinksSerializer(link)
+        return Response(serializer.data)
+    except Links.DoesNotExist:
+        return JsonResponse({'message': 'Invalid ID, NOT FOUND'})
+    
+        
+        
