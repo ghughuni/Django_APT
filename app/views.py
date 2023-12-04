@@ -190,10 +190,9 @@ def update_url(request):
 # List all products
 @api_view(['GET'])
 def links_list(request):
-    if request.method == 'GET':
-        links = Links.objects.all()
-        serializer = LinksSerializer(links, many=True)
-        return Response(serializer.data)
+    links = Links.objects.all()
+    serializer = LinksSerializer(links, many=True)
+    return Response(serializer.data)
 
 # Product Details
 @api_view(['GET'])
