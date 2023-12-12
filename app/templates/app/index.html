@@ -87,52 +87,9 @@
       </div>
     </div>
     <div class="container" id="list_products">
-      {% comment %} {% for i in product%}
-      <div class="card m-3 shadow-lg p-3 mb-5 bg-body rounded" style="max-width: 100%">
-        <div class="row g-0">
-          <div class="col-md-4 col-sm-12 text-center">
-            <img src="{{ i.img_url }}" class="img-fluid rounded-start" alt="..."/>
-          </div>
-          <div class="col-md-8">
-            <div class="card-header fw-bold fs-4">{{ i.name }}</div>
-            <div class="card-body d-flex flex-column justify-content-evenly">
-              <ul>
-                <li>
-                  <span class="fw-bold">Current Price ($): </span>
-                  <span> {{ i.current_price }}</span>
-                </li>
-                <li>
-                  <span class="fw-bold">Old Price ($): </span>
-                  <span> {{ i.old_price }}</span>
-                </li>
-                <li>
-                  <span class="fw-bold">Difference ($): </span>
-                  {% if i.price_difference < 0 %}
-                  <span class="text-danger">{{ i.price_difference }}</span>
-                  {% else %}
-                  <span class="text-success">{{ i.price_difference }}</span>
-                  {% endif %}
-                </li>
-                <li>
-                  <span class="fw-bold">Date: </span><span>{{ i.date }}</span>
-                </li>
-              </ul>
-            </div>
-            <div class="card_footer d-flex justify-content-between">
-              <a href="{{ i.url }}" target="_blank" class="btn btn-link"
-                >Go Link...</a
-              >
-              <form action="{% url 'delete_url' id=i.id %}" method="post">
-                {% csrf_token %}
-                <button class="btn btn-danger" type="submit" id="{{ i.id }}">
-                  Delete
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %} {% endcomment %}
+  
+       <!-- Links list -->
+
     </div>
 
     <script

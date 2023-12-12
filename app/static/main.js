@@ -40,36 +40,42 @@ $(document).ready(function() {
                                         <div class="card-body d-flex flex-column justify-content-evenly">
                                         <ul>
                                             <li>
-                                            <span class="fw-bold">Current Price ($): </span>
-                                            <span> ${data[i].current_price }</span>
+                                                <span class="fw-bold">Current Price ($): </span>
+                                                <span> ${data[i].current_price }</span>
                                             </li>
                                             <li>
-                                            <span class="fw-bold">Old Price ($): </span>
-                                            <span> ${data[i].old_price }</span>
+                                                <span class="fw-bold">Old Price ($): </span>
+                                                <span> ${data[i].old_price }</span>
                                             </li>
                                             <li>
-                                            <span class="fw-bold">Difference ($): </span>
-                                            ${dif_price}
+                                                <span class="fw-bold">Difference ($): </span>
+                                                ${dif_price}
                                             </li>
                                             <li>
-                                            <span class="fw-bold">Date: </span><span>${data[i].date}</span>
+                                                <span class="fw-bold">Date: </span><span>${data[i].date}</span>
                                             </li>
                                         </ul>
                                         </div>
                                         <div class="card_footer d-flex justify-content-between">
-                                        <a href="${data[i].url }" target="_blank" class="btn btn-link"
-                                            >Go Link...</a
-                                        >
-                                        <form action="{% url 'delete_url' id=${data[i].id } %}" method="post">
-                                            <button class="btn btn-danger" type="submit" id="{{ i.id }}">
-                                            Delete
-                                            </button>
-                                        </form>
+                                            <a href="${data[i].url }" target="_blank" class="btn btn-link">Go Link...</a>
+                                            <form>
+                                                <button class="btn btn-danger delete-link" type="button" data-link-id="${data[i].id}">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                     </div>
                                 </div>`
                     list_products.innerHTML += item;}
+
+                // Call delete link function
+                $('.delete-link').on('click', function (e) {
+                    e.preventDefault();
+                    const linkID = $(this).data('link-id');
+                    console.log(linkID);
+                    deleteLink(linkID);
+                });
             },
             error: function(error) {
                 console.error('Error in GET request:', error);
@@ -79,7 +85,21 @@ $(document).ready(function() {
     
 
 
-
+    function deleteLink(linkID) {
+        $.ajax({
+            url: '/link_delete/' + linkID,
+            method: 'DELETE',
+            success: function(response) {
+                console.log('Link deleted successfully:', response);
+                
+                show_data(); 
+            },
+            error: function(error) {
+                console.error('Error deleting link:', error);
+            }
+        });
+    }
+    
 
     // Get the URL from the input field and send to the Django backend
     $('#addBtn').click(function() {

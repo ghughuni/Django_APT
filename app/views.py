@@ -204,5 +204,17 @@ def link_details(request, pk):
     except Links.DoesNotExist:
         return JsonResponse({'message': 'Invalid ID, NOT FOUND'})
     
-        
+# Product Delete
+@api_view(['DELETE'])
+def link_delete(request, pk):
+    try:
+        link = Links.objects.get(id=pk)
+    except Links.DoesNotExist:
+        return Response("Link Not Found")
+
+    if request.method == 'DELETE':
+        link.delete()
+        return Response("Link successfully deleted")
+    else:
+        return Response("Invalid HTTP method")
         

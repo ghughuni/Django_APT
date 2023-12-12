@@ -11,4 +11,5 @@ urlpatterns = [
     # API
     path('api_links/', views.links_list, name='links_list'),
     path('link_details/<int:pk>/', views.link_details, name='link_details'),
+    path('link_delete/<int:pk>/', views.link_delete, name='link_delete'),
 ]
